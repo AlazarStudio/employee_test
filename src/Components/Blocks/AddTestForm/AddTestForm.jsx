@@ -74,7 +74,6 @@ function AddTestForm() {
         }
     };
 
-
     const handleDeleteQuestion = (id) => {
         const updatedQuestions = questionsList.filter((q) => q.id !== id);
         setQuestionsList(updatedQuestions);
