@@ -73,6 +73,34 @@ function Quiz({ employeeData }) {
         } else {
             clearInterval(timerRef.current); // Останавливаем таймер при завершении
             setShowResults(true);
+
+            // Отправляем результаты на сервер
+            const resultsData = {
+                employeeData,
+                answers,
+                timeSpent,
+                correctAnswersCount: questions.filter(
+                    (question) => question.correctAnswer === answers[question.id]
+                ).length,
+                totalQuestions: questions.length,
+                timestamp: new Date().toISOString()
+            };
+
+            fetch('/saveResults.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(resultsData),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log('Результаты сохранены:', data);
+                })
+                .catch((error) => {
+                    console.error('Ошибка при сохранении результатов:', error);
+                });
+
             // Обновляем состояние в localStorage после завершения теста
             localStorage.setItem(
                 'quizState',
@@ -85,6 +113,7 @@ function Quiz({ employeeData }) {
             );
         }
     };
+
 
     const currentQuestion = questions[currentQuestionIndex];
 
