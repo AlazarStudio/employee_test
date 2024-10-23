@@ -74,11 +74,21 @@ function Quiz({ employeeData }) {
             clearInterval(timerRef.current); // Останавливаем таймер при завершении
             setShowResults(true);
 
-            // Отправляем результаты на сервер
+            // Создаем данные для отправки на сервер
             const resultsData = {
                 employeeData,
-                answers,
                 timeSpent,
+                answers: questions.map((question) => {
+                    const userAnswer = answers[question.id];
+                    const isCorrect = userAnswer === question.correctAnswer;
+                    return {
+                        questionId: question.id,
+                        question: question.question,
+                        userAnswer,
+                        correctAnswer: question.correctAnswer,
+                        isCorrect
+                    };
+                }),
                 correctAnswersCount: questions.filter(
                     (question) => question.correctAnswer === answers[question.id]
                 ).length,
@@ -113,7 +123,6 @@ function Quiz({ employeeData }) {
             );
         }
     };
-
 
     const currentQuestion = questions[currentQuestionIndex];
 
