@@ -52,7 +52,7 @@ function AddTestForm() {
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.status === 'success') {
-                        alert('Вопрос успешно добавлен!');
+                        // alert('Вопрос успешно добавлен!');
                         loadQuestions(); // Перезагружаем вопросы после добавления
                         closeModal(); // Закрываем модалку после успешного добавления
                     } else {
