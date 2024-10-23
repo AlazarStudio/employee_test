@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, List, ListItem, ListItemText, Button, TextField } from '@mui/material';
 import TestResults from '../TestResults/TestResults';
+import AddTestForm from '../AddTestForm/AddTestForm'; // Импортируем форму для добавления тестов
 
 function AdminPanel() {
     const [results, setResults] = useState([]);
@@ -8,9 +9,9 @@ function AdminPanel() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [showAddTestForm, setShowAddTestForm] = useState(false);
 
     useEffect(() => {
-        // Проверка сохраненной авторизации
         const savedAuth = localStorage.getItem('isAuthenticated');
         if (savedAuth === 'true') {
             setIsAuthenticated(true);
@@ -19,7 +20,6 @@ function AdminPanel() {
 
     useEffect(() => {
         if (isAuthenticated) {
-            // Загружаем данные из results.json только после авторизации
             fetch('/results.json')
                 .then((response) => response.json())
                 .then((data) => setResults(data))
@@ -47,6 +47,10 @@ function AdminPanel() {
 
     const handleBackToList = () => {
         setSelectedResult(null);
+    };
+
+    const toggleAddTestForm = () => {
+        setShowAddTestForm((prev) => !prev);
     };
 
     if (!isAuthenticated) {
@@ -90,7 +94,16 @@ function AdminPanel() {
             <Button onClick={handleLogout} variant="contained" style={{ marginBottom: '20px' }}>
                 Выйти
             </Button>
-            {selectedResult ? (
+            <Button
+                onClick={toggleAddTestForm}
+                variant="contained"
+                style={{ marginBottom: '20px', marginLeft: '10px' }}
+            >
+                {showAddTestForm ? 'Скрыть форму добавления тестов' : 'Добавить новый тест'}
+            </Button>
+            {showAddTestForm ? (
+                <AddTestForm />
+            ) : selectedResult ? (
                 <TestResults result={selectedResult} onBack={handleBackToList} />
             ) : (
                 <List>
