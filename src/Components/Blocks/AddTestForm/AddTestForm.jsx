@@ -11,9 +11,9 @@ function AddTestForm() {
     const [questionsList, setQuestionsList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        // Загружаем существующие вопросы из questions.json
-        fetch('/questions.json')
+    const loadQuestions = () => {
+        setIsLoading(true);
+        fetch('/questions.json', { cache: 'no-store' })
             .then((response) => response.json())
             .then((data) => {
                 setQuestionsList(data);
@@ -23,6 +23,10 @@ function AddTestForm() {
                 console.error('Ошибка при загрузке вопросов:', error);
                 setIsLoading(false);
             });
+    };
+
+    useEffect(() => {
+        loadQuestions();
     }, []);
 
     const handleAddQuestion = () => {
@@ -34,7 +38,6 @@ function AddTestForm() {
                 correctAnswer
             };
 
-            // Отправляем новый вопрос на сервер для добавления
             fetch('/addQuestions.php', {
                 method: 'POST',
                 headers: {
@@ -45,8 +48,8 @@ function AddTestForm() {
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.status === 'success') {
-                        setQuestionsList((prevQuestions) => [...prevQuestions, newQuestion]);
                         alert('Вопрос успешно добавлен!');
+                        loadQuestions(); // Перезагружаем вопросы после добавления
                     } else {
                         alert('Ошибка при добавлении вопроса: ' + data.message);
                     }
@@ -55,7 +58,6 @@ function AddTestForm() {
                     console.error('Ошибка при добавлении вопроса:', error);
                 });
 
-            // Сбрасываем поля формы после добавления вопроса
             setQuestion('');
             setOption1('');
             setOption2('');
@@ -70,7 +72,6 @@ function AddTestForm() {
         const updatedQuestions = questionsList.filter((q) => q.id !== id);
         setQuestionsList(updatedQuestions);
 
-        // Отправляем обновленный список на сервер для замены существующего
         fetch('/updateQuestions.php', {
             method: 'POST',
             headers: {
@@ -82,6 +83,7 @@ function AddTestForm() {
             .then((data) => {
                 if (data.status === 'success') {
                     alert('Вопрос успешно удален!');
+                    loadQuestions(); // Перезагружаем вопросы после удаления
                 } else {
                     alert('Ошибка при удалении вопроса: ' + data.message);
                 }
