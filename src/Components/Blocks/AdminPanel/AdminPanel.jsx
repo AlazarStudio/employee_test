@@ -28,7 +28,7 @@ function AdminPanel() {
     }, [isAuthenticated]);
 
     const handleLogin = () => {
-        if (username === 'admin' && password === 'admin') {
+        if (username === 'admin' && password === 'Xj7!qK4m') {
             setIsAuthenticated(true);
             localStorage.setItem('isAuthenticated', 'true');
         } else {
